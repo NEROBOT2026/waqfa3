@@ -16,7 +16,12 @@ jobs:
         with:
           distribution: temurin
           java-version: 17
-      - run: mkdir -p www && cp index.html www/index.html
+      - name: Prepare files
+        run: |
+          mkdir -p www
+          if [ -f index.html ]; then cp index.html www/index.html; else cp "$(ls index*.html | tail -n 1)" www/index.html; fi
+          if [ ! -f adhan.mp3 ] && ls *.mp3 >/dev/null 2>&1; then cp "$(ls *.mp3 | head -n 1)" adhan.mp3; fi
+          ls -la www
       - run: curl -fL --retry 3 https://api.alquran.cloud/v1/quran/quran-uthmani -o quran-raw.json
       - run: npm install
       - run: npx cap add android
